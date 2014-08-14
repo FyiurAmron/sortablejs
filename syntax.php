@@ -16,6 +16,7 @@
  * version 2.6 Added support for jQuery and dokuwiki Weatherwax ->
  * version 2.7 Fixed problem with first row not getting sorted
  * version 2.8 Fixed problem with first row not getting sorted in default sort. Added option "sumrow" to prevent sum line sort. 
+ * version 2.9 fixed problem with header row being sorted in earlier versions of dokuwiki.
  */
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
@@ -112,6 +113,12 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
     foreach($oa as $opt) {
       list($c,$v) = split("=",$opt);
       if ($c=="sumrow") {
+        $c=$v;
+        $v="sumrow";
+        if ($c=="") {
+          $c="1";
+        }
+      } else if ($c=="3phase") {
         $v=$c;
         $c="";
       }
@@ -123,6 +130,9 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
         }
       }
       switch ($cmpr) {
+        case '3phase':
+            $ret .= " threephase";
+            break;
         case 'nosort':
             $ret .= " col_" . $c . "_nosort";
             break;
@@ -140,10 +150,11 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
             $ret .= " col_" . $c . "_alpha";
             break;
         case 'sort':
-            $ret = ' sort' . $opt . $ret;
+            $ret .= ' sort' . $opt;
             break;
         case 'sumrow':
-            $ret = ' sortbottom' . $c . $ret;
+            $ret .= ' sortbottom_' . $c;
+            //$ret = ' sortbottom' . $ret;
             break;
       }
     }
