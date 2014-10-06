@@ -99,7 +99,8 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
           }
           break;
         case DOKU_LEXER_EXIT :
-          $renderer->p_open(); // re-open the paragraph
+          //$renderer->p_open();
+          // DO NOT re-open the paragraph, it would cause an error if the table is the last content on a page
           break;
       }
       return true;
