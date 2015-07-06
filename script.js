@@ -444,12 +444,16 @@ sorttable = {
   var NUM=0;
   var DDMM=0;
   var MMDD=0;
+  var IP=0;
     sortfn = sorttable.sort_alpha;
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
       set=0;
       if (text !== '') {
-        if (text.match(/^-?[£$¤]?[\d,.]+[%€]?$/)) {
+        if (text.match(/^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/)) {  // now for ip-addresses
+          set=1;
+          IP=1;
+        } else if (text.match(/^-?[£$¤]?[\d,.]+[%€]?$/)) {
           set=1;
           NUM=1;
         }
@@ -487,6 +491,7 @@ sorttable = {
       }
     }
     if (TEXT>0 || NUM+DDMM+MMDD>1) return sorttable.sort_alpha;
+    if (IP>0) return sorttable.sort_ipaddr;
     if (NUM>0) return sorttable.sort_numeric;
     if (DDMM>0) return sorttable.sort_ddmm;
     if (MMDD>0) return sorttable.sort_mmdd;
@@ -575,6 +580,13 @@ sorttable = {
   /* sort functions
      each sort function takes two parameters, a and b
      you are comparing a[0] and b[0] */
+  sort_ipaddr: function(a,b){
+    aa = a[0].split(".",4);
+    bb = b[0].split(".",4);
+    var resulta = aa[0]*0x1000000 + aa[1]*0x10000 + aa[2]*0x100 + aa[3]*1;
+    var resultb = bb[0]*0x1000000 + bb[1]*0x10000 + bb[2]*0x100 + bb[3]*1;
+    return resulta-resultb;
+  },
   sort_numeric: function(a,b) {
     aa = parseFloat(a[0].replace(/[^0-9.\-]/g,''));
     if (isNaN(aa)) {aa = 0;}
