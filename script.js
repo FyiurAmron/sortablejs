@@ -42,6 +42,9 @@
   6.7.2015
   * version 2.11 Added ip address sort. Thanks Chefkeks
   
+  14.12.2015
+  * versio 2.12 php 7 compatibility and issue #8. Default sort for columns > 9
+  
   Instructions:
   Used from dokuwiki 
   Click on the headers to sort
@@ -161,7 +164,7 @@ sorttable = {
             }
             
             sorttable.makeSortable(table,overs,bottoms,ph2);
-            var pattdefault=/\bsortr?\d/gi;
+            var pattdefault=/\bsortr?\d\d?/gi;
             if (colid.search(pattdefault) != -1) {
               var mi= new Array();
               mi = colid.match(pattdefault);
