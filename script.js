@@ -39,7 +39,9 @@
   13.8.2014 
   * version 2.9 Fixed problem with header row being sorted in earlier versions of dokuwiki. Added option for sorting back to default
 
-
+  6.7.2015
+  * version 2.11 Added ip address sort. Thanks Chefkeks
+  
   Instructions:
   Used from dokuwiki 
   Click on the headers to sort

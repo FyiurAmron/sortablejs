@@ -18,6 +18,8 @@
  * version 2.8 Fixed problem with first row not getting sorted in default sort. Added option "sumrow" to prevent sum line sort. 
  * version 2.9 fixed problem with header row being sorted in earlier versions of dokuwiki.
  * version 2.10 fixed odt export (LarsGit223)
+ * version 2.11 Added ip address sort. Thanks Chefkeks
+ * version 2.12 php 7 compatibility. Cahnged split -> explode
  */
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
@@ -110,10 +112,10 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
   }
 
   function __validateOptions($opts) {
-    $oa = split(" ", $opts);
+    $oa = explode(" ", $opts);
     $ret = "";
     foreach($oa as $opt) {
-      list($c,$v) = split("=",$opt);
+      list($c,$v) = explode("=",$opt);
       if ($c=="sumrow") {
         $c=$v;
         $v="sumrow";
