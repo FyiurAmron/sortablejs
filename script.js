@@ -1,12 +1,10 @@
-/*
+/**
  based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
  (distributed under the condisions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
  see 
  2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
  2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
-
-//
 
 var stIsIE = /*@cc_on!@*/false;
 //var tableid = 0;
