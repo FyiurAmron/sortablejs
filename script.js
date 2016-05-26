@@ -52,6 +52,9 @@
 
  v2.13
  * revision by Vaxquis; fixes some (most) of the current issues
+ 
+ v2.14
+ * by Vaxquis: fixed and streamlined date sorts; it now uses the JS Date() Object to do the sorting.
  */
 
 //
@@ -68,9 +71,6 @@ var sorttable = {
         if ( !document.createElement || !document.getElementsByTagName ) {
             return;
         }
-
-//    sorttable.DATE_RE = /^(\d\d?)[\/\.\-](\d\d?)[\/\.\-]((\d\d)?\d\d)$/;
-        sorttable.DATE_RE = /^(\d\d?)[\/\.\-](\d\d?)[\/\.\-]((\d\d)?\d\d)((\d\d?)[:\.]?(\d\d?))?$/;
 
         var elems = document.getElementsByTagName( "table" );
         var elem;
@@ -444,49 +444,30 @@ var sorttable = {
         // guess the type of a column based on its first non-blank row
         var textCnt = 0;
         var numCnt = 0;
-        var ddmmCnt = 0;
-        var mmddCnt = 0;
+        var dateCnt = 0;
         var ipCnt = 0;
 
         for( var i = 0; i < table.tBodies[0].rows.length; i++ ) {
             var text = sorttable.getInnerText( table.tBodies[0].rows[i].cells[column] );
             if ( text !== "" ) {
-                if ( text.match( /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/ ) ) {  // now for ip-addresses
+                if ( text.match( /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/ ) ) {
                     ipCnt++;
-                } else if ( text.match( /^[\-\+]?[£$¤]?[\d,.]+[%€]?$/ ) ) {
+                } else if ( text.match( /^[\-\+].?[\d,.]+.?$/ ) ) {
                     numCnt++;
-                } else {
-                    // check for a date: dd/mm/yyyy or dd/mm/yy
-                    // can have / or . or - as separator
-                    // can be mm/dd as well
-                    var possdate = text.match( sorttable.DATE_RE );
-                    if ( possdate ) {
-                        // looks like a date
-                        var first = parseInt( possdate[1] );
-                        var second = parseInt( possdate[2] );
-                        if ( first > 12 ) {
-                            // definitely dd/mm
-                            ddmmCnt++;
-                        } else if ( second > 12 ) {
-                            mmddCnt++;
-                        } else {
-                            // looks like a date, but we can't tell which, so assume
-                            // that it's dd/mm (English imperialism!) and keep looking
-                            ddmmCnt++;
-                        }
-                    } else { // not a date (nor IP nor number)
-                        textCnt++;
-                    }
+                } else if ( isNaN( new Date( text ).getTime() ) ) {
+                    dateCnt++;
+                } else { // not a date (nor IP nor number)
+                    textCnt++;
                 }
             }
         }
-        if ( textCnt > numCnt && textCnt > ipCnt && textCnt > ddmmCnt && textCnt > mmddCnt )
+        if ( textCnt > numCnt && textCnt > ipCnt && textCnt > dateCnt )
             return sorttable.sort_alpha;
-        if ( numCnt > ipCnt && numCnt > ddmmCnt && numCnt > mmddCnt )
+        if ( numCnt > ipCnt && numCnt > dateCnt )
             return sorttable.sort_numeric;
-        if ( ipCnt > ddmmCnt && ipCnt > mmddCnt )
+        if ( ipCnt > dateCnt )
             return sorttable.sort_ipaddr;
-        return ( ddmmCnt > mmddCnt ) ? sorttable.sort_ddmm : sorttable.sort_mmdd;
+        return sorttable.sort_date;
     },
     getInnerText: function ( node ) {
         // gets the text we want to use for sorting for a cell.
@@ -589,80 +570,9 @@ var sorttable = {
     sort_alpha: function ( a, b ) {
         return a[0].localeCompare( b[0] );
     },
-    sort_ddmm: function ( a, b ) {
-        var mtch = a[0].match( sorttable.DATE_RE );
-        var y = mtch[3];
-        var m = mtch[2];
-        var d = mtch[1];
-        var t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt1 = y + m + d + t;
-        mtch = b[0].match( sorttable.DATE_RE );
-        y = mtch[3];
-        m = mtch[2];
-        d = mtch[1];
-        t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt2 = y + m + d + t;
-        if ( dt1 === dt2 ) {
-            return 0;
-        }
-        if ( dt1 < dt2 ) {
-            return -1;
-        }
-        return 1;
-    },
-    sort_mmdd: function ( a, b ) {
-        var mtch = a[0].match( sorttable.DATE_RE );
-        var y = mtch[3];
-        var d = mtch[2];
-        var m = mtch[1];
-        var t = mtch[5] + '';
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt1 = y + m + d + t;
-        mtch = b[0].match( sorttable.DATE_RE );
-        y = mtch[3];
-        d = mtch[2];
-        m = mtch[1];
-        t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt2 = y + m + d + t;
-        if ( dt1 === dt2 ) {
-            return 0;
-        }
-        if ( dt1 < dt2 ) {
-            return -1;
-        }
-        return 1;
+    sort_date: function ( a, b ) {
+        var aa = new Date( a[0] ), bb = new Date( b[0] );
+        return ( aa > bb ) - ( aa < bb );
     },
     shaker_sort: function ( list, comp_func ) {
         // A stable sort function to allow multi-level sorting of data
@@ -701,7 +611,6 @@ var sorttable = {
 
         } // while(swap)
     }
-
 
 };
 
