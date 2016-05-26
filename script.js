@@ -554,11 +554,11 @@ var sorttable = {
         if ( b[0] === "" ) {
             return 1;
         }
-        var aa = parseFloat( a[0].replace( /[^0-9.\-]/g, '' ) );
+        var aa = parseFloat( a[0].replace( ",", "." ).replace( /[^0-9.\-]/g, "" ) );
         if ( isNaN( aa ) ) {
             aa = Number.NEGATIVE_INFINITY;
         }
-        var bb = parseFloat( b[0].replace( /[^0-9.\-]/g, '' ) );
+        var bb = parseFloat( b[0].replace( ",", "." ).replace( /[^0-9.\-]/g, "" ) );
         if ( isNaN( bb ) ) {
             bb = Number.NEGATIVE_INFINITY;
         }
