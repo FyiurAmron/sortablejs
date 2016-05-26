@@ -1,27 +1,10 @@
 <?php
 /**
- * Sortablejs: Javascript for Sortable table
- *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Otto Vainio
- * version 1.1 Fixed javascript error in sorttable js
- * version 2.0 Added <div> to sort any table
- * version 2.1 Changed script to allow multiple sortable tables in one page
- * version 2.2 A table can now be sorted by one column by default.
- * version 2.2a css+js compress broke this script. Now fixed some jslint complains.
- * version 2.3 Added support for odt plugin. (Aurélien Bompard)
- * version 2.3a Fixed default sort with aligned text (Andre Rauschenbach)
- * version 2.4 Added options to set manual override options for column sort. (nosort, numeric, alpha, ddmm, mmdd)
- * version 2.5 Fixed problems with secionediting, footnotes and edittable
- * version 2.6 Added support for jQuery and dokuwiki Weatherwax ->
- * version 2.7 Fixed problem with first row not getting sorted
- * version 2.8 Fixed problem with first row not getting sorted in default sort. Added option "sumrow" to prevent sum line sort.
- * version 2.9 fixed problem with header row being sorted in earlier versions of dokuwiki.
- * version 2.10 fixed odt export (LarsGit223)
- * version 2.11 Added ip address sort. Thanks Chefkeks
- * version 2.12 php 7 compatibility. Cahnged split -> explode
- * @author     Vaxquis
- * version 2.13 implemented https://github.com/oiv/sortablejs/pull/18/files for PHP 7 compatibility, minor style/pretty print changes
+ based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
+ (distributed under the condisions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
+ see 
+ 2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
+ 2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
 // must be run within Dokuwiki
 if ( !defined( 'DOKU_INC' ) )
@@ -157,11 +140,8 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
                 case 'numeric':
                     $ret .= " col_".$c."_numeric";
                     break;
-                case 'ddmm':
-                    $ret .= " col_".$c."_ddmm";
-                    break;
-                case 'mmdd':
-                    $ret .= " col_".$c."_mmdd";
+                case 'date':
+                    $ret .= " col_".$c."_date";
                     break;
                 case 'alpha':
                 case 'text':
