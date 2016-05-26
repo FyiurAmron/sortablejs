@@ -52,9 +52,6 @@
 
  v2.13
  * revision by Vaxquis; fixes some (most) of the current issues
- 
- v2.14
- * by Vaxquis: fixed and streamlined date sorts; it now uses the JS Date() Object to do the sorting.
  */
 
 //
@@ -452,9 +449,9 @@ var sorttable = {
             if ( text !== "" ) {
                 if ( text.match( /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/ ) ) {
                     ipCnt++;
-                } else if ( text.match( /^[\-\+].?[\d,.]+.?$/ ) ) {
+                } else if ( text.match( /^[\-\+]?.?\d*[\d,.]?\d+.?$/ ) ) {
                     numCnt++;
-                } else if ( isNaN( new Date( text ).getTime() ) ) {
+                } else if ( !isNaN( new Date( text ).getTime() ) ) {
                     dateCnt++;
                 } else { // not a date (nor IP nor number)
                     textCnt++;
