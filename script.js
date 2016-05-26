@@ -1,57 +1,9 @@
 /*
- SortTable
-
- Instructions:
- Used from dokuwiki
- Click on the headers to sort
-
- Thanks to many, many people for contributions and suggestions.
- Currently licensed as X11:
- http://www.kryogenix.org/code/browser/licence.html
-
- v2.1 (7th April 2007)
- * originally by Stuart Langridge, http://www.kryogenix.org/code/browser/sorttable/
-
- v2.1b (19 Feb 2008)
- * first Otto Vainio (otto@valjakko.net) revision
- * Fixed some jslint errors to support DokuWiki (http://www.splitbrain.org) js compression
- * function reinitsort()
- * sorttable.reinit
-
- v2.2 (27.11.2008)
- * Changed line 77 document.getElementsByTagName('table') to div.getElementsByTagName('table')
- to allow multiple sortable tables in same page (Thanks to Hans Sampiemon)
-
- v2.3 (14.1.2009)
- * Added option for default sorting.
- * Use dokuwiki event registration.
-
- v2.4 (27.1.2009)
- * Cleaned some jlint errors to make this workable, when css+js compress is set in dokuwiki
-
- v2.5 (10.5.2011)
- * Fixed problems with secionediting, footnotes and edittable
-
- v2.6 (18.7.2013)
- * Added support for jQuery and dokuwiki Weatherwax ->
-
- v2.7 (28.5.2014)
- * Fixed problem with first row not getting sorted
-
- v2.8 (30.5.2014)
- * Fixed problem with first row not getting sorted in default sort. Added option "sumrow" to prevent sum line sort.
-
- v2.9 (13.8.2014)
- * Fixed problem with header row being sorted in earlier versions of dokuwiki. Added option for sorting back to default
-
- v2.11 (6.7.2015)
- * Added ip address sort. (Thanks Chefkeks)
-
- v2.12 (14.12.2015)
- * PHP 7 compatibility and issue #8. Default sort for columns > 9
-
- v2.13
- * revision by Vaxquis; fixes some (most) of the current issues
+ based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
+ (distributed under the condisions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
+ see 
+ 2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
+ 2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
 
 //
@@ -62,28 +14,23 @@ var stIsIE = /*@cc_on!@*/false;
 var sorttable = {
     reinit: function () {
         arguments.callee.done = true;
-        // kill the timer
-        //if (_timer) {clearInterval(_timer);}
 
         if ( !document.createElement || !document.getElementsByTagName ) {
             return;
         }
 
-//    sorttable.DATE_RE = /^(\d\d?)[\/\.\-](\d\d?)[\/\.\-]((\d\d)?\d\d)$/;
-        sorttable.DATE_RE = /^(\d\d?)[\/\.\-](\d\d?)[\/\.\-]((\d\d)?\d\d)((\d\d?)[:\.]?(\d\d?))?$/;
-
         var elems = document.getElementsByTagName( "table" );
         var elem;
         for( var i = 0; i < elems.length; i++ ) {
             elem = elems[i];
-            if ( elem.className.search( /\bsortable\b/ ) !== -1 ) {
+            if ( jQuery(elem).hasClass("sortable") ) {
                 sorttable.makeSortable( elem );
             }
         }
         elems = document.getElementsByTagName( "div" );
         for( var i = 0; i < elems.length; i++ ) {
             elem = elems[i];
-            if ( elem.className.search( /\bsortable\b/ ) !== -1 ) {
+            if ( jQuery(elem).hasClass("sortable") ) {
                 sorttable.makeSortableDiv( elem );
             }
         }
@@ -176,29 +123,10 @@ var sorttable = {
             if ( classname[0] === colname ) {
                 thiscell = cell;
             }
-//       if (cell.nodeType == 1) { // an element
-//         cell.className = cell.className.replace('sorttable_sorted_reverse','');
-//         cell.className = cell.className.replace('sorttable_sorted','');
-//       }
         }
         if ( thiscell === false ) {
             return;
         }
-        var sortfwdind = document.getElementById( 'sorttable_sortfwdind' );
-        if ( sortfwdind ) {
-            sortfwdind.parentNode.removeChild( sortfwdind );
-        }
-        var sortrevind = document.getElementById( 'sorttable_sortrevind' );
-        if ( sortrevind ) {
-            sortrevind.parentNode.removeChild( sortrevind );
-        }
-
-        thiscell.className += ' sorttable_sorted';
-        sortfwdind = document.createElement( 'span' );
-        sortfwdind.id = "sorttable_sortfwdind";
-        sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
-        thiscell.appendChild( sortfwdind );
-
         // build an array to sort. This is a Schwartzian transform thing,
         // i.e., we "decorate" each row with the actual sort key,
         // sort based on the sort keys, and then put the rows back in order
@@ -219,18 +147,11 @@ var sorttable = {
             tb.appendChild( row_array[jj][1] );
         }
 
-        //delete row_array;
-        // If reverse sort wanted, then doit
         if ( revs ) {
-            // reverse the table, which is quicker
             sorttable.reverse( thiscell.sorttable_tbody, sindex );
-            thiscell.className = thiscell.className.replace( 'sorttable_sorted',
-                    'sorttable_sorted_reverse' );
-            thiscell.removeChild( document.getElementById( 'sorttable_sortfwdind' ) );
-            sortrevind = document.createElement( 'span' );
-            sortrevind.id = "sorttable_sortrevind";
-            sortrevind.innerHTML = stIsIE ? '&nbsp<font face="webdings">5</font>' : '&nbsp;&#x25B4;';
-            thiscell.appendChild( sortrevind );
+            jQuery(thiscell).addClass( "sorttable_sorted_reverse" );
+        } else {
+            jQuery(thiscell).addClass( "sorttable_sorted" );
         }
     },
     makeSortable: function ( table, overrides, bottoms, ph2 ) {
@@ -286,7 +207,7 @@ var sorttable = {
             sindex = 0;
         }
         var headrow = table.rows[0].cells;
-//    for (var i=0; i<headrow.length; i++) {
+
         for( var i = 0; i < headrow.length; i++ ) {
             // manually override the type with a sorttable_type attribute
             var colOptions = "";
@@ -319,100 +240,50 @@ var sorttable = {
                 headrow[i].sorttable_columnindex = i;
                 headrow[i].sorttable_tbody = table.tBodies[0];
                 headrow[i].sindex = sindex;
-//        dean_addEvent(headrow[i],"click", function(e) {
-//        addEvent(headrow[i],"click", function(e) {
-                jQuery( headrow[i] ).click( function () {
 
+                jQuery( headrow[i] ).click( function () {
                     var theadrow = this.parentNode;
-                    var sortrevind, sortfwdind;
-                    if ( this.className.search( /\bsorttable_sorted\b/ ) !== -1 ) {
-                        // if we're already sorted by this column, just
-                        // reverse the table, which is quicker
+                    var jqt = jQuery( this );
+                    if ( jqt.hasClass( "sorttable_sorted" ) ) {
+                        // if we're already sorted by this column, just reverse the table
                         sorttable.reverse( this.sorttable_tbody, this.sindex );
-                        this.className = this.className.replace( 'sorttable_sorted',
-                                'sorttable_sorted_reverse' );
-                        sortfwdind = document.getElementById( 'sorttable_sortfwdind' );
-                        if ( sortfwdind ) {
-                            sortfwdind.parentNode.removeChild( sortfwdind );
-                        }
-//            this.removeChild(document.getElementById('sorttable_sortfwdind'));
-                        sortrevind = document.getElementById( 'sorttable_sortrevind' );
-                        if ( sortrevind ) {
-                            sortrevind.parentNode.removeChild( sortrevind );
-                        }
-                        sortrevind = document.createElement( 'span' );
-                        sortrevind.id = "sorttable_sortrevind";
-                        sortrevind.innerHTML = stIsIE ? '&nbsp<font face="webdings">5</font>' : '&nbsp;&#x25B4;';
-                        this.appendChild( sortrevind );
+                        jqt.removeClass( "sorttable_sorted" );
+                        jqt.addClass( "sorttable_sorted_reverse" );
                         return;
                     }
-                    if ( this.className.search( /\bsorttable_sorted_reverse\b/ ) !== -1 ) {
+                    if ( jqt.hasClass( "sorttable_sorted_reverse" ) ) {
                         if ( !ph2 ) {
                             sorttable.original_order( this.sorttable_tbody, this.sindex );
                             var list = theadrow.childNodes;
                             for( var i = 0; i < list.length; i++ ) {
                                 var cell = list[i];
                                 if ( cell.nodeType === 1 ) { // an element
-                                    cell.className = cell.className.replace( 'sorttable_sorted_reverse', '' );
-                                    cell.className = cell.className.replace( 'sorttable_sorted', '' );
+                                    var cc = jQuery( cell );
+                                    cc.removeClass( "sorttable_sorted" );
+                                    cc.removeClass( "sorttable_sorted_reverse" );
                                 }
-                            }
-                            sortfwdind = document.getElementById( 'sorttable_sortfwdind' );
-                            if ( sortfwdind ) {
-                                sortfwdind.parentNode.removeChild( sortfwdind );
-                            }
-                            sortrevind = document.getElementById( 'sorttable_sortrevind' );
-                            if ( sortrevind ) {
-                                sortrevind.parentNode.removeChild( sortrevind );
                             }
                             return;
                         } else {
-                            // if we're already sorted by this column in reverse, just
-                            // re-reverse the table, which is quicker
+                            // if we're already sorted by this column in reverse, just re-reverse the table
                             sorttable.reverse( this.sorttable_tbody, this.sindex );
-                            this.className = this.className.replace( 'sorttable_sorted_reverse',
-                                    'sorttable_sorted' );
-                            sortrevind = document.getElementById( 'sorttable_sortrevind' );
-                            if ( sortrevind ) {
-                                sortrevind.parentNode.removeChild( sortrevind );
-                            }
-                            //            this.removeChild(document.getElementById('sorttable_sortrevind'));
-                            sortfwdind = document.getElementById( 'sorttable_sortfwdind' );
-                            if ( sortfwdind ) {
-                                sortfwdind.parentNode.removeChild( sortfwdind );
-                            }
-                            sortfwdind = document.createElement( 'span' );
-                            sortfwdind.id = "sorttable_sortfwdind";
-                            sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
-                            this.appendChild( sortfwdind );
+                            jqt.removeClass( "sorttable_sorted_reverse" );
+                            jqt.addClass( "sorttable_sorted" );
                             return;
                         }
                     }
 
                     // remove sorttable_sorted classes
-//          theadrow = this.parentNode;
                     var list = theadrow.childNodes;
                     for( var i = 0; i < list.length; i++ ) {
                         var cell = list[i];
                         if ( cell.nodeType === 1 ) { // an element
-                            cell.className = cell.className.replace( 'sorttable_sorted_reverse', '' );
-                            cell.className = cell.className.replace( 'sorttable_sorted', '' );
+                            var cc = jQuery( cell );
+                            cc.removeClass( "sorttable_sorted" );
+                            cc.removeClass( "sorttable_sorted_reverse" );
                         }
                     }
-                    sortfwdind = document.getElementById( 'sorttable_sortfwdind' );
-                    if ( sortfwdind ) {
-                        sortfwdind.parentNode.removeChild( sortfwdind );
-                    }
-                    sortrevind = document.getElementById( 'sorttable_sortrevind' );
-                    if ( sortrevind ) {
-                        sortrevind.parentNode.removeChild( sortrevind );
-                    }
-
-                    this.className += ' sorttable_sorted';
-                    sortfwdind = document.createElement( 'span' );
-                    sortfwdind.id = "sorttable_sortfwdind";
-                    sortfwdind.innerHTML = stIsIE ? '&nbsp<font face="webdings">6</font>' : '&nbsp;&#x25BE;';
-                    this.appendChild( sortfwdind );
+                    jqt.addClass( "sorttable_sorted" );
 
                     // build an array to sort. This is a Schwartzian transform thing,
                     // i.e., we "decorate" each row with the actual sort key,
@@ -444,49 +315,30 @@ var sorttable = {
         // guess the type of a column based on its first non-blank row
         var textCnt = 0;
         var numCnt = 0;
-        var ddmmCnt = 0;
-        var mmddCnt = 0;
+        var dateCnt = 0;
         var ipCnt = 0;
 
         for( var i = 0; i < table.tBodies[0].rows.length; i++ ) {
             var text = sorttable.getInnerText( table.tBodies[0].rows[i].cells[column] );
             if ( text !== "" ) {
-                if ( text.match( /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/ ) ) {  // now for ip-addresses
+                if ( text.match( /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/ ) ) {
                     ipCnt++;
-                } else if ( text.match( /^[\-\+]?[£$¤]?[\d,.]+[%€]?$/ ) ) {
+                } else if ( text.match( /^[\-\+]?.?\d*[\d,.]?\d+.?$/ ) ) {
                     numCnt++;
-                } else {
-                    // check for a date: dd/mm/yyyy or dd/mm/yy
-                    // can have / or . or - as separator
-                    // can be mm/dd as well
-                    var possdate = text.match( sorttable.DATE_RE );
-                    if ( possdate ) {
-                        // looks like a date
-                        var first = parseInt( possdate[1] );
-                        var second = parseInt( possdate[2] );
-                        if ( first > 12 ) {
-                            // definitely dd/mm
-                            ddmmCnt++;
-                        } else if ( second > 12 ) {
-                            mmddCnt++;
-                        } else {
-                            // looks like a date, but we can't tell which, so assume
-                            // that it's dd/mm (English imperialism!) and keep looking
-                            ddmmCnt++;
-                        }
-                    } else { // not a date (nor IP nor number)
-                        textCnt++;
-                    }
+                } else if ( !isNaN( new Date( text ).getTime() ) ) {
+                    dateCnt++;
+                } else { // not a date (nor IP nor number)
+                    textCnt++;
                 }
             }
         }
-        if ( textCnt > numCnt && textCnt > ipCnt && textCnt > ddmmCnt && textCnt > mmddCnt )
+        if ( textCnt > numCnt && textCnt > ipCnt && textCnt > dateCnt )
             return sorttable.sort_alpha;
-        if ( numCnt > ipCnt && numCnt > ddmmCnt && numCnt > mmddCnt )
+        if ( numCnt > ipCnt && numCnt > dateCnt )
             return sorttable.sort_numeric;
-        if ( ipCnt > ddmmCnt && ipCnt > mmddCnt )
+        if ( ipCnt > dateCnt )
             return sorttable.sort_ipaddr;
-        return ( ddmmCnt > mmddCnt ) ? sorttable.sort_ddmm : sorttable.sort_mmdd;
+        return sorttable.sort_date;
     },
     getInnerText: function ( node ) {
         // gets the text we want to use for sorting for a cell.
@@ -576,11 +428,11 @@ var sorttable = {
         if ( b[0] === "" ) {
             return 1;
         }
-        var aa = parseFloat( a[0].replace( /[^0-9.\-]/g, '' ) );
+        var aa = parseFloat( a[0].replace( ",", "." ).replace( /[^0-9.\-]/g, "" ) );
         if ( isNaN( aa ) ) {
             aa = Number.NEGATIVE_INFINITY;
         }
-        var bb = parseFloat( b[0].replace( /[^0-9.\-]/g, '' ) );
+        var bb = parseFloat( b[0].replace( ",", "." ).replace( /[^0-9.\-]/g, "" ) );
         if ( isNaN( bb ) ) {
             bb = Number.NEGATIVE_INFINITY;
         }
@@ -589,80 +441,9 @@ var sorttable = {
     sort_alpha: function ( a, b ) {
         return a[0].localeCompare( b[0] );
     },
-    sort_ddmm: function ( a, b ) {
-        var mtch = a[0].match( sorttable.DATE_RE );
-        var y = mtch[3];
-        var m = mtch[2];
-        var d = mtch[1];
-        var t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt1 = y + m + d + t;
-        mtch = b[0].match( sorttable.DATE_RE );
-        y = mtch[3];
-        m = mtch[2];
-        d = mtch[1];
-        t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt2 = y + m + d + t;
-        if ( dt1 === dt2 ) {
-            return 0;
-        }
-        if ( dt1 < dt2 ) {
-            return -1;
-        }
-        return 1;
-    },
-    sort_mmdd: function ( a, b ) {
-        var mtch = a[0].match( sorttable.DATE_RE );
-        var y = mtch[3];
-        var d = mtch[2];
-        var m = mtch[1];
-        var t = mtch[5] + '';
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt1 = y + m + d + t;
-        mtch = b[0].match( sorttable.DATE_RE );
-        y = mtch[3];
-        d = mtch[2];
-        m = mtch[1];
-        t = mtch[5] + '';
-        if ( t.length < 1 ) {
-            t = '';
-        }
-        if ( m.length === 1 ) {
-            m = '0' + m;
-        }
-        if ( d.length === 1 ) {
-            d = '0' + d;
-        }
-        var dt2 = y + m + d + t;
-        if ( dt1 === dt2 ) {
-            return 0;
-        }
-        if ( dt1 < dt2 ) {
-            return -1;
-        }
-        return 1;
+    sort_date: function ( a, b ) {
+        var aa = new Date( a[0] ), bb = new Date( b[0] );
+        return ( aa > bb ) - ( aa < bb );
     },
     shaker_sort: function ( list, comp_func ) {
         // A stable sort function to allow multi-level sorting of data
@@ -701,7 +482,6 @@ var sorttable = {
 
         } // while(swap)
     }
-
 
 };
 

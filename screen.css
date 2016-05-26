@@ -1,3 +1,11 @@
 div.sortable thead tr.row0 th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after { 
     content: " \25B4\25BE" 
 }
+
+div.sortable thead tr.row0 th.sorttable_sorted:after { 
+    content: " \25BE" 
+}
+
+div.sortable thead tr.row0 th.sorttable_sorted_reverse:after { 
+    content: " \25B4" 
+}
