@@ -9,3 +9,7 @@ div.sortable thead tr.row0 th.sorttable_sorted:after {
 div.sortable thead tr.row0 th.sorttable_sorted_reverse:after { 
     content: " \25B4" 
 }
+
+div.sortable thead tr.row0 th.nosort:after { 
+    content: "" !important;
+}
