@@ -215,7 +215,7 @@ var sorttable = {
             }
             if ( colOptions.match( /\bnosort\b/ ) ) { 
                 jQuery(headrow[i]).addClass("nosort");
-            } else {// skip this col
+            } else {
                 var mtch = colOptions.match( /\b[a-z0-9]+\b/ );
                 var override;
                 if ( mtch ) {
