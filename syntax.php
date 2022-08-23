@@ -1,8 +1,8 @@
 <?php
 /**
  based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
- (distributed under the condisions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
- see 
+ (distributed under the conditions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
+ maintaned by:
  2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
  2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
@@ -33,8 +33,6 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
 
     function connectTo( $mode ) {
         $this->Lexer->addEntryPattern( '<sortable[^>]*>(?=.*?</sortable>)', $mode, 'plugin_sortablejs' );
-//    $this->Lexer->addEntryPattern('\x3Csortable.*?\x3E',$mode,'plugin_sortablejs');
-//    $this->Lexer->addEntryPattern('<sortable>',$mode,'plugin_sortablejs');
     }
 
     function postConnect() {
@@ -53,10 +51,8 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
                 }
                 return array( $state, $scl );
             case DOKU_LEXER_UNMATCHED :
-//        return p_render('xhtml',p_get_instructions($match),$info);
                 return array( $state, $match );
             case DOKU_LEXER_EXIT :
-//        return "</div>";
                 return array( $state, "" );
         }
         return array();
@@ -70,10 +66,6 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
                     $renderer->doc .= "<div class=\"sortable$match\">";
                     break;
                 case DOKU_LEXER_UNMATCHED :
-//          $dbgr = p_render('xhtml',p_get_instructions($match),$info);
-//          $renderer->doc .= p_render('xhtml',p_get_instructions($match),$info);
-//          $renderer->doc .= $match;
-//          $instructions = array_slice(p_get_instructions($match), 1, -1);
                     $instructions = p_get_instructions( $match );
                     foreach( $instructions as $instruction ) {
                         call_user_func_array( array( &$renderer, $instruction[0] ), $instruction[1] );
