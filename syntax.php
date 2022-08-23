@@ -1,10 +1,12 @@
 <?php
 /**
- based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
- (distributed under the conditions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
- maintaned by:
- 2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
- 2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
+ Based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
+ (distributed under the conditions of MIT licence from http://www.kryogenix.org/code/browser/licence.html).
+ Includes open-source contributions from other people
+ (see https://github.com/FyiurAmron/sortablejs/graphs/contributors for more details).
+ Maintainers:
+ 2007-2016 oiv (Otto Vainio at otto@valjakko.net)
+ 2016-? vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
 // must be run within Dokuwiki
 if ( !defined( 'DOKU_INC' ) )
