@@ -1,9 +1,11 @@
 /**
- based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
- (distributed under the condisions of MIT licence from http://www.kryogenix.org/code/browser/licence.html)
- see 
- 2007-2016 by oiv (Otto Vainio at otto@valjakko.net)
- 2016-? by vaxquis AKA FyiurAmron (spamove@gmail.com)
+ Based on code from http://www.kryogenix.org/code/browser/sorttable/ by Stuart Langridge
+ (distributed under the conditions of MIT licence from http://www.kryogenix.org/code/browser/licence.html).
+ Includes open-source contributions from other people
+ (see https://github.com/FyiurAmron/sortablejs/graphs/contributors for more details).
+ Maintainers:
+ 2007-2016 oiv (Otto Vainio at otto@valjakko.net)
+ 2016-? vaxquis AKA FyiurAmron (spamove@gmail.com)
  */
 
 var stIsIE = /*@cc_on!@*/false;
@@ -102,7 +104,6 @@ var sorttable = {
         }
     },
     defaultSort: function ( table, colid, revs ) {
-//    theadrow = table.tHead.rows[0].cells;
         var havetHead = table.tHead;
         var sindex = 1;
         if ( havetHead ) {
@@ -117,7 +118,6 @@ var sorttable = {
             var cell = theadrow[i];
             var colclass = cell.className;
             var classname = colclass.split( " " );
-//       if (cell.className==colname)
             if ( classname[0] === colname ) {
                 thiscell = cell;
             }
@@ -153,24 +153,6 @@ var sorttable = {
         }
     },
     makeSortable: function ( table, overrides, bottoms, ph2 ) {
-//    tableid++;
-        /*
-         if (table.getElementsByTagName('thead').length === 0) {
-         // table doesn't have a tHead. Since it should have, create one and
-         // put the first table row in it.
-         the = document.createElement('thead');
-         the.appendChild(table.rows[0]);
-         table.insertBefore(the,table.firstChild);
-         }
-         */
-        // Safari doesn't support table.tHead, sigh
-        /*
-         if (table.tHead === null) {table.tHead = table.getElementsByTagName('thead')[0];}
-
-         if (table.tHead.rows.length != 1) {return;} // can't cope with two header rows
-         */
-//    table.tHead.className += ' tableid'+tableid;
-
         // Sorttable v1 put rows with a class of "sortbottom" at the bottom (as
         // "total" rows, for example). This is B&R, since what you're supposed
         // to do is put them in a tfoot. So, if there are sortbottom rows,
@@ -180,10 +162,7 @@ var sorttable = {
         if ( bottoms > 0 ) {
             var frombottom = table.rows.length - bottoms;
             for( var i = table.rows.length - 1; i >= frombottom; i-- ) {
-//      if (bottoms<frombottom) {
                 sortbottomrows[sortbottomrows.length] = table.rows[i];
-//      }
-//      frombottom++;
             }
             if ( sortbottomrows ) {
                 var tfo;
@@ -226,17 +205,8 @@ var sorttable = {
                 } else {
                     headrow[i].sorttable_sortfunction = sorttable.guessType( table, i );
                 }
-                /*
-                 if (!headrow[i].className.match(/\bsorttable_nosort\b/)) { // skip this col
-                 mtch = headrow[i].className.match(/\bsorttable_([a-z0-9]+)\b/);
-                 if (mtch) { override = mtch[1]; }
-                 if (mtch && typeof sorttable["sort_"+override] == 'function') {
-                 headrow[i].sorttable_sortfunction = sorttable["sort_"+override];
-                 } else {
-                 headrow[i].sorttable_sortfunction = sorttable.guessType(table,i);
-                 }
-                 */
-                // make it clickable to sort
+
+             // make it clickable to sort
                 headrow[i].sorttable_columnindex = i;
                 headrow[i].sorttable_tbody = table.tBodies[0];
                 headrow[i].sindex = sindex;
