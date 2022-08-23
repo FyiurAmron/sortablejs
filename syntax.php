@@ -146,7 +146,6 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
                     break;
                 case 'sumrow':
                     $ret .= ' sortbottom_'.$c;
-                    //$ret = ' sortbottom' . $ret;
                     break;
             }
         }
