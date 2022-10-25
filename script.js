@@ -47,7 +47,7 @@ var sorttable = {
         for( var i = 0; i < childTables.length; i++ ) {
             elem = childTables[i];
             var colid = div.className;
-            var patt1 = /\bcol_\d_[a-z]+/gi;
+            var patt1 = /\bcol_\d+_[a-z]+/gi;
             var overs = [];
             if ( colid.search( patt1 ) !== -1 ) {
                 var overrides = colid.match( patt1 );
