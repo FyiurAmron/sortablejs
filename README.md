@@ -1,7 +1,7 @@
 sortablejs
 ==========
 
-JavaScript-based (client-side) Dokuwiki table sorting plugin. In semi-maintenance mode now - only bugfixes and feature requests via PRs are handled.
+JavaScript-based (client-side) DokuWiki table sorting plugin. In semi-maintenance mode now - only bugfixes and feature requests via PRs are handled.
 
 DokuWiki homepage at https://www.dokuwiki.org/plugin:sortablejs
 
