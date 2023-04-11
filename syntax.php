@@ -104,10 +104,15 @@ class syntax_plugin_sortablejs extends DokuWiki_Syntax_Plugin {
     }
 
     function __validateOptions( $opts ) {
-        $oa = explode( " ", $opts );
+        if ( empty( $opts ) ) {
+        	return "";
+        }
         $ret = "";
+        $oa = explode( " ", $opts );
         foreach( $oa as $opt ) {
-            list($c, $v) = explode( "=", $opt );
+            $explodedOption = explode( "=", $opt );
+            $c = $explodedOption[0];
+            $v = $explodedOption[1] ?? null;
             if ( $c == "sumrow" ) {
                 $c = $v;
                 $v = "sumrow";

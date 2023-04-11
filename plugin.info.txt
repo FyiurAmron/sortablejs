@@ -1,7 +1,7 @@
 base sortablejs
 author vaxquis
 email spamove@gmail.com
-date 2022-10-25
+date 2023-04-12
 name sortablejs
 desc Allow sorting tables by columns
 url https://github.com/FyiurAmron/sortablejs
