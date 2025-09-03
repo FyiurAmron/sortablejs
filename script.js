@@ -412,8 +412,12 @@ var sorttable = {
         return a[0].localeCompare( b[0] );
     },
     sort_date: function ( a, b ) {
-        var aa = new Date( a[0] ), bb = new Date( b[0] );
-        return ( aa > bb ) - ( aa < bb );
+        function parseDate( dateStr ) {
+            return /^(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{4})$/.test( dateStr )
+                ? new Date( RegExp.$3, RegExp.$2 - 1, RegExp.$1 )
+                : new Date( dateStr );
+        }
+        return parseDate( a[0] ) - parseDate( b[0] );
     },
     shaker_sort: function ( list, comp_func ) {
         // A stable sort function to allow multi-level sorting of data
