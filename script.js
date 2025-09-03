@@ -411,13 +411,13 @@ var sorttable = {
     sort_alpha: function ( a, b ) {
         return a[0].localeCompare( b[0] );
     },
-    sort_date: function (a, b) {
-        function parseDate(dateStr) {
-            return /^(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{4})$/.test(dateStr)
-                ? new Date(RegExp.$3, RegExp.$2 - 1, RegExp.$1)
-                : new Date(dateStr);
+    sort_date: function ( a, b ) {
+        function parseDate( dateStr ) {
+            return /^(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{4})$/.test( dateStr )
+                ? new Date( RegExp.$3, RegExp.$2 - 1, RegExp.$1 )
+                : new Date( dateStr );
         }
-        return parseDate(a[0]) - parseDate(b[0]);
+        return parseDate( a[0] ) - parseDate( b[0] );
     },
     shaker_sort: function ( list, comp_func ) {
         // A stable sort function to allow multi-level sorting of data
